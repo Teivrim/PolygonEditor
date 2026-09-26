@@ -1,0 +1,40 @@
+﻿# ── PolygonEditor ───────────────────────────────────────────────────────
+# CMake + Ninja. Зависимости вендорёны, поэтому сеть не нужна и
+# _deps/FetchContent в проекте не используется.
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Сборка редактора 3D (CMake + Ninja)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Добавить MinGW в PATH
+        run: |
+          $env:PATH = "C:\mingw64\bin;$env:PATH"
+          echo "C:\mingw64\bin" >> $env:GITHUB_PATH
+          g++ --version | Select-Object -First 1
+          cmake --version | Select-Object -First 1
+
+      - name: Конфигурация
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Сборка
+        run: cmake --build build
+
+      - name: Бинарник на месте
+        run: |
+          if (-not (Test-Path build\PolygonEditor.exe)) {
+            "PolygonEditor.exe не создан"; exit 1
+          }
+          "PolygonEditor.exe: {0:N0} байт" -f (Get-Item build\PolygonEditor.exe).Length
