@@ -35,6 +35,22 @@ NOTICE — PolygonEditor 3D
 - **Источник:** https://github.com/nigels-com/glew
 - **Как используется:** CMake link
 
+## Вендорённые бинарные библиотеки
+
+В папке `lib/` лежат import-библиотеки MinGW и собранный Assimp:
+
+| Файл | Зачем |
+|---|---|
+| `libglfw3.a`, `libglfw3dll.a` | GLFW — окно и ввод |
+| `glew32.dll` | GLEW — загрузка расширений OpenGL |
+| `Assimp.dll`, `libassimp.dll.a`, `assimp.lib` | Assimp — импорт FBX/OBJ |
+| `assimp-vc143-mt.dll`, `assimp-vc143-mt.lib` | Assimp, MSVC x64 |
+| `D3DCompiler_42.dll`, `D3DX9_42.dll` | требуются GLEW на Windows |
+
+Это осознанно вендорённые зависимости, а не остатки сборки: без них линкер
+падает с `cannot find -lglfw3`. При замене на MinGW-совместимые библиотеки
+удалите MSVC-варианты (`*-vc143-mt.*`) и `D3DX9_42.dll` — они для Windows.
+
 ## Требования к атрибуции
 
 При распространении скомпилированного бинарника или исходников:
