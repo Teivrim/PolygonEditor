@@ -1,0 +1,57 @@
+#ifndef INTERFACEMANAGER_H
+#define INTERFACEMANAGER_H
+
+#include "../core/Render/Win32/RenderUI.h"
+#include "ObjectUI.h"
+#include "Panels.h"
+#include "../Application/WindowAPIsupport/Win32/InitialWin32.h"
+#include "../Core/core.h"
+
+struct Dimensions {
+    int width;
+    int height;
+};
+
+class InterfaceManager {
+private:
+    InitialWin32* window;
+    RenderUI renderer;
+    ObjectUI objectUI;
+    Panels panels;
+    Core* core;
+    bool isStopMove = false;
+    bool isDragging = false;
+    PanelType draggingEdge = PanelType::None;
+    int dragStartX = 0;
+    int dragStartY = 0;
+    int dragStartValue = 0;
+    bool menuBarVisible = true;
+    
+    void updatePanelMinSizes();
+    void renderMenuBar();
+    void handleMenuClick(int x, int y);
+    
+public:
+    void BlockMoveToMainWindow(int x, int y);
+    bool CheckerClickToPanel(int x, int y);
+    InterfaceManager(Core* corePtr);
+    ~InterfaceManager() = default;
+    void swapclick() { isClick = !isClick; };
+    void setWindow(InitialWin32* w) { window = w; }
+    bool isClick = true;
+    Dimensions getDimensions();
+    void clearScreen(int width, int height);
+    void setup3DViewport(const Dimensions& dims);
+    void renderStatic();
+    void renderDynamic();
+    void handleClick(int x, int y);
+    void handleMouseMove(int x, int y);
+    void handleMouseDown(int x, int y); 
+    void handleMouseUp(int x, int y);
+    void SwapFlag(Core &A);
+    HWND getHWND() const;
+    
+    HCURSOR getCursorForEdge(PanelType edge) const;
+};
+
+#endif
